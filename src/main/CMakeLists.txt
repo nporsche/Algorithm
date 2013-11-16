@@ -1,0 +1,11 @@
+SET(EXECUTABLE_OUTPUT_PATH ${Algorithm_SOURCE_DIR}/bin)
+
+SET(SRC_LIST main.cpp)
+
+INCLUDE_DIRECTORIES(${Algorithm_SOURCE_DIR}/include)
+
+LINK_DIRECTORIES(${Algorithm_SOURCE_DIR}/lib)
+
+ADD_EXECUTABLE(Algorithm ${SRC_LIST})
+
+TARGET_LINK_LIBRARIES(Algorithm util)
