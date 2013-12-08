@@ -12,121 +12,107 @@ struct slot
 		c = 0;
 	}
 	char c;	// '<' '^' '\'
-	int total;
+	int total;	//
 };
 
 string LCS(const string& s1, const string& s2)
 {
-	int s1_len = s1.length();
-	int s2_len = s2.length();
-
+	
+	string X(" ");
+	string Y(" ");
+	X += s1;
+	Y += s2;
+	int m = s1.length();
+	int n = s2.length();
+	//X, Y are the strings from [1,m], [1,n] respectively
+	
+	//create the memory of result like a 2 demissions array, from [0~m][0~n]
 	vector<vector<slot> > s;
 	vector<slot> t;
-	t.resize(s2_len,slot());
-	s.resize(s1_len, t);
+	t.resize(n + 1,slot());
+	s.resize(m + 1, t);
 
-	//build one matrix with row count = s1_len, column count = s2_len.
-	//s[i][j] means the longest common sequence of Xi and Yi 
-	for(int i = 0; i< s1_len; ++i)
+	for(int row = 0; row <= m;++row)
 	{
-		for(int j = 0; j < s2.length(); ++j)
-		{
-			if(s1[i] == s2[j])
-			{
-				char c = '\\';
-				if(i ==0 || j == 0)
-					s[i][j].total = 1;
-									
-				else
-					s[i][j].total += s[i-1][j-1].total + 1;
+		s[row][0].total = 0;
+	}
 
-				s[i][j].c = c; 
-			}
-			else	//find the longest from subproblems of s[i-1][j] and s[i][j-1]
+	for(int column = 0; column <= n; ++column)
+	{
+		s[0][column].total = 0;
+	}
+	
+	//fill the result to s[][], s[i][j].total means the maximum length of LCS of Xi, Yj
+	for(int i = 1; i<= m;++i)
+	{
+		for(int j = 1; j <= n; ++j)
+		{
+			if(X[i] == Y[j])
 			{
-				if( i == 0 && j == 0 )
-				{
-					//do nothing
-				}
-				else if(i != 0 && j==0)
+				s[i][j].total = s[i-1][j-1].total + 1;
+				s[i][j].c = '\\';
+			}
+			else	//get sub optimization problems. find the longest common string from s[i-1][j] and s[i][j-1]
+			{
+				if(s[i-1][j].total > s[i][j-1].total)
 				{
 					s[i][j].total = s[i-1][j].total;
 					s[i][j].c = '^';
 				}
-				else if(i == 0 && j!=0)
+				else
 				{
 					s[i][j].total = s[i][j-1].total;
 					s[i][j].c = '<';
 				}
-				else
-				{
-					s[i][j].total = max(s[i-1][j].total, s[i][j-1].total);
-					if(s[i-1][j].total > s[i][j-1].total)
-						s[i][j].c = '^';
-					else
-						s[i][j].c = '<';
-				}
 			}
 		}
 	}
+	//now we have the result of s[0~m][0~n]
 	stack<char> stack_of_char;
-	int i = s1_len-1;
 
-	int j = s2_len-1;
+	int i = m;
+	int j = n;
 	while(true)
 	{
-		if(i < 0 || j < 0 || s[i][j].c == 0)
-			break;
 		if(s[i][j].c == '\\')
 		{
-			stack_of_char.push(s1[i]);
+			stack_of_char.push(X[i]);
 			i--;
 			j--;
 		}
 		else if(s[i][j].c == '<')
-		{
 			j--;
-		}
 		else if(s[i][j].c == '^')
-		{
 			i--;
-		}
+		else 
+			break;
 	}
 
 	string result;
 	while(!stack_of_char.empty())
 	{
 		result += stack_of_char.top();
+
 		stack_of_char.pop();
 	}
 
 	return result;
 }
 
-using namespace std;
 int main()
 {
 	int set_count;
 	cin >> set_count;
-
+	cin.ignore();
 	while(set_count--)
-	{
-		string line;
-		int i = 0;
+	{		
 		string inputs[2];
 
-		while(getline(cin,line))
-		{
-			if(line.length() == 0)
-				continue;
-
-			inputs[i++] = line;
-			if( i == 2 )
-			{
-				string commonString = LCS(inputs[0], inputs[1]);
-				cout << commonString << endl;
-				i = 0;
-			}
-		}
+		getline(cin, inputs[0]);
+		getline(cin,inputs[1]);
+		string commonString = LCS(inputs[0], inputs[1]);
+		cout << commonString << endl;
+		cin.ignore();
 	}
+	
 }
