@@ -2,6 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
+#include <stack>
 using namespace std;
 
 #define INFINITE 0xffff
@@ -53,17 +54,37 @@ int fastest_way_through_factory(int e[2], int a[2][6], int t[2][5], int x[2])
 	}
     
 	slot f;
-	int time;
-	for(int i = 0; i < 2; ++i)
+	int final_out_of_line;
+	for(int iLine = 0; iLine < 2; ++iLine)
 	{
-		if(s[i][5].total + x[i] < f.total)
+		if(s[iLine][5].total + x[iLine] < f.total)
 		{
-			f = s[i][5];
-			time = s[i][5].total + x[i];
+			f = s[iLine][5];
+			final_out_of_line = iLine;
 		}
 	}
+
+	stack<int> stack_of_line;
+	int iLine = final_out_of_line;
+	int iStation = 5;	
+	while(true)
+	{
+		if(iStation == 0)
+			break;
+
+		stack_of_line.push(s[iLine][iStation].pre_line);
+		iLine = s[iLine][iStation].pre_line;
+		iStation--;
+	}
+	while (!stack_of_line.empty())
+	{
+		cout << stack_of_line.top() + 1 << " ";
+		stack_of_line.pop();
+	}
+	cout << final_out_of_line + 1 << endl;
+
     
-	return time;
+	return f.total + x[final_out_of_line];
 }
 
 int car_manufacturing(int e[2], int a[2][6], int t[2][5], int x[2])
@@ -84,8 +105,7 @@ int main()
 		for(int j = 0; j< 6;++j)
 		{
 			cin >> a[i][j];
-		}
-        
+		}        
 	}
     
 	for(int i = 0; i<2;++i)

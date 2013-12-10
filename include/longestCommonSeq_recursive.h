@@ -26,25 +26,16 @@ int main()
 {
 	int set_count;
 	cin >> set_count;
+	cin.ignore();
 
 	while(set_count--)
-	{
-		string line;
-		int i = 0;
+	{		
 		string inputs[2];
+		getline(cin,inputs[0]);
+		getline(cin,inputs[1]);
 
-		while(getline(cin,line))
-		{
-			if(line.length() == 0)
-				continue;
-
-			inputs[i++] = line;
-			if( i == 2 )
-			{
-				string commonString = LCS(inputs[0], inputs[1]);
-				cout << commonString << endl;
-				i = 0;
-			}
-		}
+		string commonString = LCS(inputs[0], inputs[1]);
+		cout << commonString << endl;
+		cin.ignore();
 	}
 }

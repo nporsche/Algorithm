@@ -24,7 +24,7 @@ int fastest_way_through_station(int iStation, int line, int e[2], int a[2][6], i
 
 int car_manufacturing(int e[2], int a[2][6], int t[2][5], int x[2])
 {
-	int mem1[6]; //mem[i][j] 第i个station选的是哪一个line
+	int mem1[6]; //mem[i][j] 第i个station的上一个station来自哪个line	0号元素没有使用， 只使用了[1,5]
 	int r1 = fastest_way_through_station(5,0,e,a,t,mem1) + x[0];	//from station 1,6.
 
 	int mem2[6]; 
@@ -32,19 +32,12 @@ int car_manufacturing(int e[2], int a[2][6], int t[2][5], int x[2])
 	
 	int* final_mem = r1 < r2? mem1:mem2;
 	int final_line = r1 < r2 ? 0:1;
-	stack<int> s;
-	s.push(final_line);
-	for(int i = 5; i > 1; ++i)
+	
+	for(int i = 1; i <= 5; ++i)
 	{
-		s.push(final_mem[i]);
+		cout << final_mem[i] + 1 << " ";
 	}
-	while(!s.empty())
-	{
-		cout << s.top();
-		cout << " ";
-		s.pop();
-	}
-	cout << endl;
+	cout << final_line + 1 << endl;
 	return min(r1,r2);
 }
 
@@ -75,7 +68,7 @@ int main()
 
 	cin >> x[0] >> x[1];
 	
-	cout << "The fastest way required:" << car_manufacturing(e,a,t,x) << endl;;
+	cout << "The fastest way requires:" << car_manufacturing(e,a,t,x) << endl;
 
 	return 0;
 
